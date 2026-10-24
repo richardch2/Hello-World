@@ -8,11 +8,10 @@ Double-click `index.html` to open it in your browser. It needs no server and no 
 
 The app has its own icon in `icons/`. To put it on an Android home screen:
 
-1. Serve the folder, e.g. in Termux: `cd small-cap-tracker && python -m http.server 8080`.
-2. Open `http://localhost:8080` in Chrome.
-3. Tap ⋮ → **Add to Home screen** (or **Install app**).
+1. Open https://richardch2.github.io/Hello-World/ in Chrome. GitHub Pages hosts the app from this repo.
+2. Tap ⋮ → **Add to Home screen** (or **Install app**).
 
-The icon then opens the tracker full screen, like an app. Opened as a plain file (`file://`), Chrome ignores the icon, so serve it first.
+The icon then opens the tracker full screen, like an app.
 
 ## Layout
 
