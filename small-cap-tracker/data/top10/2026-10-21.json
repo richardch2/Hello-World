@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-21",
+  "fund": "IWM",
+  "source": "Morningstar IWM portfolio snapshot dated Oct 21, 2026",
+  "stocks": [
+    { "rank": 1,  "ticker": "FROG",  "name": "JFrog",                        "sector": "Technology",  "weight": 0.36, "blurb": "Software supply-chain platform for building and shipping code." },
+    { "rank": 2,  "ticker": "MOG.A", "name": "Moog",                         "sector": "Industrials", "weight": 0.35, "blurb": "Precision motion-control systems for aircraft, space and defense." },
+    { "rank": 3,  "ticker": "BTSG",  "name": "BrightSpring Health Services", "sector": "Healthcare",  "weight": 0.35, "blurb": "Home and community health care plus pharmacy services." },
+    { "rank": 4,  "ticker": "GKOS",  "name": "Glaukos",                      "sector": "Healthcare",  "weight": 0.34, "blurb": "Medical devices and drugs for glaucoma and corneal disease." },
+    { "rank": 5,  "ticker": "UMBF",  "name": "UMB Financial",                "sector": "Financials",  "weight": 0.33, "blurb": "Kansas City–based bank holding company." },
+    { "rank": 6,  "ticker": "TWST",  "name": "Twist Bioscience",             "sector": "Healthcare",  "weight": 0.33, "blurb": "Synthetic DNA manufacturing for research and drug discovery." },
+    { "rank": 7,  "ticker": "SM",    "name": "SM Energy",                    "sector": "Energy",      "weight": 0.32, "blurb": "Oil and natural gas producer in Texas and Utah basins." },
+    { "rank": 8,  "ticker": "FCFS",  "name": "FirstCash",                    "sector": "Financials",  "weight": 0.30, "blurb": "Pawn stores across the Americas and point-of-sale lending." },
+    { "rank": 9,  "ticker": "RHP",   "name": "Ryman Hospitality Properties", "sector": "Real Estate", "weight": 0.30, "blurb": "REIT owning large convention-center hotels, including Gaylord resorts." },
+    { "rank": 10, "ticker": "TXG",   "name": "10x Genomics",                 "sector": "Healthcare",  "weight": 0.30, "blurb": "Single-cell and spatial biology instruments for life-science labs." }
+  ]
+}

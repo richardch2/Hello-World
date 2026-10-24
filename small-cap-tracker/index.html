@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Small-Cap Top 10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column — header, day picker, sector filter chips, ranked ledger rows with weight bars, source footnote */
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --fg: #1b211d;
+  --muted: #5d6860;
+  --line: #dde2dc;
+  --accent: #1f6b4f;
+  --accent-soft: #dcebe3;
+  --bar: #2f8a66;
+  --up: #1f6b4f;
+  --down: #a3402b;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121614; --surface: #1a201d; --fg: #e6ebe7; --muted: #98a59c;
+    --line: #2c3530; --accent: #6fcf9f; --accent-soft: #1f3a2d; --bar: #4fb585;
+    --up: #6fcf9f; --down: #f08a72;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121614; --surface: #1a201d; --fg: #e6ebe7; --muted: #98a59c;
+  --line: #2c3530; --accent: #6fcf9f; --accent-soft: #1f3a2d; --bar: #4fb585;
+  --up: #6fcf9f; --down: #f08a72;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5;
+  padding: 32px 16px 48px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+header { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 6vw, 42px); line-height: 1.1; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 0; max-width: 62ch; }
+.day { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+.day select, .day button {
+  font: 500 13px var(--body); color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+}
+.day button { cursor: pointer; }
+.day button:disabled { opacity: .4; cursor: default; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip, .sort {
+  font: 500 13px var(--body); color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.chip:focus-visible, .sort:focus-visible, a:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sort { border-radius: 8px; }
+.list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.row { display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; padding: 14px 16px; border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.rank { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.name { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.name b { font-weight: 600; }
+.name b a { color: inherit; text-decoration: none; }
+.name b a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.ticker { font-family: var(--mono); font-weight: 500; color: var(--fg); }
+.sector { background: var(--accent-soft); color: var(--accent); border-radius: 4px; padding: 1px 7px; font-size: 12px; font-weight: 500; }
+.move { font-family: var(--mono); font-size: 12px; }
+.move.up { color: var(--up); }
+.move.down { color: var(--down); }
+.weight { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 500; }
+.bar { grid-column: 2 / 4; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--bar); border-radius: 2px; }
+.blurb { grid-column: 2 / 4; font-size: 13px; color: var(--muted); margin: 0; }
+.summary { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: var(--muted); }
+.summary strong { color: var(--fg); font-family: var(--mono); font-weight: 500; }
+.dropped { font-size: 13px; color: var(--muted); margin: 0; }
+footer { font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; max-width: 68ch; }
+footer a { color: var(--accent); }
+.empty { padding: 24px 16px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow" id="eyebrow">Russell 2000</span>
+    <h1>Top 10 small-cap stocks</h1>
+    <p class="lede">The ten largest holdings in the iShares Russell 2000 ETF (IWM), ranked by their weight in the fund. Every day saved in the history is kept, so you can step back through earlier lists and see who moved up or down.</p>
+  </header>
+
+  <div class="day">
+    <button type="button" id="prev" aria-label="Earlier day">‹</button>
+    <label for="date">Day</label>
+    <select id="date"></select>
+    <button type="button" id="next" aria-label="Later day">›</button>
+    <span id="compare"></span>
+  </div>
+
+  <div class="controls">
+    <div class="chips" id="chips" role="group" aria-label="Filter by sector"></div>
+    <button class="sort" id="sort" type="button">Sort: by weight</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <ol class="list" id="list"><li class="empty">Loading…</li></ol>
+  <p class="dropped" id="dropped"></p>
+
+  <footer>
+    <span id="source"></span>
+    <span>Ticker links open the quote on Yahoo Finance. This list shows index size, not a recommendation to buy anything.</span>
+  </footer>
+</div>
+
+<script>
+const DATA = "data/top10/";
+let dates = [];          // newest first
+let current = null;      // snapshot shown
+let previous = null;     // the saved day before it
+let active = "All";
+let sortMode = "weight";
+const sortLabels = { weight: "Sort: by weight", name: "Sort: A–Z" };
+const cache = {};
+
+const $ = id => document.getElementById(id);
+
+async function loadDay(date) {
+  if (!cache[date]) cache[date] = fetch(DATA + date + ".json").then(r => {
+    if (!r.ok) throw new Error(date + ": " + r.status);
+    return r.json();
+  });
+  return cache[date];
+}
+
+function fmtDate(d) {
+  return new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function quoteUrl(t) { return "https://finance.yahoo.com/quote/" + encodeURIComponent(t.replace(".", "-")); }
+
+async function show(date) {
+  const i = dates.indexOf(date);
+  $("date").value = date;
+  $("prev").disabled = i >= dates.length - 1;
+  $("next").disabled = i <= 0;
+  try { history.replaceState(null, "", "#" + date); } catch (e) {}
+  current = await loadDay(date);
+  previous = i < dates.length - 1 ? await loadDay(dates[i + 1]) : null;
+  $("eyebrow").textContent = "Russell 2000 · as of " + fmtDate(current.date);
+  $("compare").textContent = previous ? "Changes vs " + fmtDate(previous.date) : "First saved day";
+  $("source").textContent = "Weights from " + (current.source || "the fund's holdings") + ".";
+  buildChips();
+  render();
+}
+
+function buildChips() {
+  const stocks = current.stocks;
+  const sectors = ["All", ...new Set(stocks.map(s => s.sector))];
+  if (!sectors.includes(active)) active = "All";
+  const chips = $("chips");
+  chips.innerHTML = "";
+  sectors.forEach(sec => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.dataset.sector = sec;
+    const n = sec === "All" ? stocks.length : stocks.filter(s => s.sector === sec).length;
+    b.textContent = `${sec} (${n})`;
+    b.addEventListener("click", () => {
+      active = sec;
+      try { localStorage.setItem("sc-sector", sec); } catch (e) {}
+      render();
+    });
+    chips.appendChild(b);
+  });
+}
+
+function movement(s) {
+  if (!previous) return null;
+  const before = previous.stocks.find(p => p.ticker === s.ticker);
+  if (!before) return { cls: "up", text: "new" };
+  const d = before.rank - s.rank;
+  if (d > 0) return { cls: "up", text: "▲" + d };
+  if (d < 0) return { cls: "down", text: "▼" + -d };
+  return { cls: "", text: "–" };
+}
+
+function render() {
+  const stocks = current.stocks;
+  const maxW = Math.max(...stocks.map(s => s.weight));
+  $("chips").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.sector === active)));
+  $("sort").textContent = sortLabels[sortMode];
+
+  let rows = stocks.filter(s => active === "All" || s.sector === active);
+  rows = rows.slice().sort(sortMode === "weight" ? (a, b) => a.rank - b.rank : (a, b) => a.name.localeCompare(b.name));
+
+  const total = rows.reduce((t, s) => t + s.weight, 0);
+  const summary = $("summary");
+  summary.innerHTML = "";
+  [["Showing", rows.length + " of " + stocks.length], ["Combined fund weight", total.toFixed(2) + "%"], ["Days saved", String(dates.length)]]
+    .forEach(([label, value]) => {
+      const span = document.createElement("span");
+      const strong = document.createElement("strong");
+      strong.textContent = value;
+      span.append(label + " ", strong);
+      summary.appendChild(span);
+    });
+
+  const list = $("list");
+  list.innerHTML = "";
+  if (!rows.length) { list.innerHTML = '<li class="empty">No stocks in this sector.</li>'; }
+  rows.forEach(s => {
+    const li = document.createElement("li");
+    li.className = "row";
+    li.innerHTML = `
+      <span class="rank"></span>
+      <div class="name">
+        <b><a target="_blank" rel="noopener"></a></b>
+        <div class="meta"><span class="ticker"></span><span class="sector"></span><span class="move"></span></div>
+      </div>
+      <span class="weight"></span>
+      <div class="bar" aria-hidden="true"><span></span></div>
+      <p class="blurb"></p>`;
+    li.querySelector(".rank").textContent = "#" + s.rank;
+    const a = li.querySelector("a");
+    a.href = quoteUrl(s.ticker);
+    a.textContent = s.name;
+    li.querySelector(".ticker").textContent = s.ticker;
+    li.querySelector(".sector").textContent = s.sector;
+    const m = movement(s), mv = li.querySelector(".move");
+    if (m) { mv.textContent = m.text; if (m.cls) mv.classList.add(m.cls); } else mv.remove();
+    li.querySelector(".weight").textContent = Number(s.weight).toFixed(2) + "%";
+    li.querySelector(".bar span").style.width = (s.weight / maxW * 100).toFixed(1) + "%";
+    const blurb = li.querySelector(".blurb");
+    if (s.blurb) blurb.textContent = s.blurb; else blurb.remove();
+    list.appendChild(li);
+  });
+
+  const gone = previous ? previous.stocks.filter(p => !stocks.some(s => s.ticker === p.ticker)) : [];
+  $("dropped").textContent = gone.length ? "Dropped out since " + fmtDate(previous.date) + ": " + gone.map(p => p.ticker).join(", ") : "";
+}
+
+$("sort").addEventListener("click", () => { sortMode = sortMode === "weight" ? "name" : "weight"; render(); });
+$("date").addEventListener("change", e => show(e.target.value));
+$("prev").addEventListener("click", () => show(dates[dates.indexOf(current.date) + 1]));
+$("next").addEventListener("click", () => show(dates[dates.indexOf(current.date) - 1]));
+
+(async () => {
+  try { const saved = localStorage.getItem("sc-sector"); if (saved) active = saved; } catch (e) {}
+  try {
+    dates = (await (await fetch(DATA + "index.json")).json()).dates;
+    if (!dates.length) throw new Error("no days saved");
+    const sel = $("date");
+    dates.forEach(d => { const o = document.createElement("option"); o.value = d; o.textContent = fmtDate(d); sel.appendChild(o); });
+    const wanted = location.hash.slice(1);
+    await show(dates.includes(wanted) ? wanted : dates[0]);
+  } catch (e) {
+    $("list").innerHTML = '<li class="empty">Couldn’t load the saved days. Open this page through a web server (for example GitHub Pages), not as a local file.</li>';
+  }
+})();
+</script>
+</body>
+</html>
