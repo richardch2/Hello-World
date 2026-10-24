@@ -122,8 +122,10 @@ footer a { color: var(--accent); }
   </footer>
 </div>
 
+<script src="data/top10/all.js"></script>
 <script>
 const DATA = "data/top10/";
+const BUNDLE = window.TOP10 || null;  // present when all.js loaded; lets the page run from disk
 let dates = [];          // newest first
 let current = null;      // snapshot shown
 let previous = null;     // the saved day before it
@@ -135,6 +137,7 @@ const cache = {};
 const $ = id => document.getElementById(id);
 
 async function loadDay(date) {
+  if (BUNDLE && BUNDLE.days[date]) return BUNDLE.days[date];
   if (!cache[date]) cache[date] = fetch(DATA + date + ".json").then(r => {
     if (!r.ok) throw new Error(date + ": " + r.status);
     return r.json();
@@ -256,14 +259,14 @@ $("next").addEventListener("click", () => show(dates[dates.indexOf(current.date)
 (async () => {
   try { const saved = localStorage.getItem("sc-sector"); if (saved) active = saved; } catch (e) {}
   try {
-    dates = (await (await fetch(DATA + "index.json")).json()).dates;
+    dates = BUNDLE ? BUNDLE.dates : (await (await fetch(DATA + "index.json")).json()).dates;
     if (!dates.length) throw new Error("no days saved");
     const sel = $("date");
     dates.forEach(d => { const o = document.createElement("option"); o.value = d; o.textContent = fmtDate(d); sel.appendChild(o); });
     const wanted = location.hash.slice(1);
     await show(dates.includes(wanted) ? wanted : dates[0]);
   } catch (e) {
-    $("list").innerHTML = '<li class="empty">Couldn’t load the saved days. Open this page through a web server (for example GitHub Pages), not as a local file.</li>';
+    $("list").innerHTML = '<li class="empty">Couldn’t load the saved days. Run scripts/add_snapshot.py to rebuild data/top10/all.js, then reopen this page.</li>';
   }
 })();
 </script>

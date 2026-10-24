@@ -34,15 +34,18 @@ def validate(snap, label):
 
 
 def rebuild_index():
-    dates = []
+    snaps = {}
     for path in sorted(DATA_DIR.glob("????-??-??.json")):
         snap = json.loads(path.read_text())
         validate(snap, path.name)
         if path.stem != snap["date"]:
             sys.exit(f"{path.name}: file name does not match date {snap['date']}")
-        dates.append(snap["date"])
-    index = {"dates": sorted(dates, reverse=True)}
+        snaps[snap["date"]] = snap
+    index = {"dates": sorted(snaps, reverse=True)}
     (DATA_DIR / "index.json").write_text(json.dumps(index, indent=2) + "\n")
+    # The same data as a script, so index.html also works opened straight from disk.
+    bundle = json.dumps({"dates": index["dates"], "days": snaps}, ensure_ascii=False)
+    (DATA_DIR / "all.js").write_text(f"window.TOP10 = {bundle};\n")
     return index
 
 

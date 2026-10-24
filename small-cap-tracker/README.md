@@ -15,8 +15,4 @@ A daily history of the ten largest holdings in the iShares Russell 2000 ETF (IWM
 
 ## Viewing
 
-The page loads the JSON files with `fetch`, so it needs a web server. Opening the file straight from disk won't work. Either turn on GitHub Pages for the repo or run this locally:
-
-```
-cd small-cap-tracker && python3 -m http.server 8000
-```
+Double-click `index.html` to open it in your browser. No server is needed, because the page reads `data/top10/all.js`, which the script rebuilds along with the index. The page also works on GitHub Pages or any web server.
