@@ -17,7 +17,8 @@
     value(v, kind) {
       const n = Number(v);
       if (kind === "percent") return n.toFixed(2) + "%";
-      if (kind === "money") return "$" + n.toLocaleString("en-US", { maximumFractionDigits: 2 });
+      if (kind === "change") return (n > 0 ? "+" : n < 0 ? "−" : "") + Math.abs(n).toFixed(2) + "%";
+      if (kind === "money") return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       return n.toLocaleString("en-US");
     },
   };

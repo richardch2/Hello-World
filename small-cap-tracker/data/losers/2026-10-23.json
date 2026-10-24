@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-23",
+  "source": "Alpha Vantage top gainers and losers, 2026-10-23 16:15:58 US/Eastern",
+  "items": [
+    {
+      "rank": 1,
+      "ticker": "AARD",
+      "name": "AARD",
+      "change_pct": -64.81,
+      "price": 1.39,
+      "volume": 15938779,
+      "blurb": "Closed at $1.39, down $2.56 on 15,938,779 shares traded."
+    },
+    {
+      "rank": 2,
+      "ticker": "DAVI",
+      "name": "DAVI",
+      "change_pct": -50.74,
+      "price": 6.0,
+      "volume": 446464,
+      "blurb": "Closed at $6.00, down $6.18 on 446,464 shares traded."
+    },
+    {
+      "rank": 3,
+      "ticker": "POM",
+      "name": "POM",
+      "change_pct": -42.36,
+      "price": 1.17,
+      "volume": 1324671,
+      "blurb": "Closed at $1.17, down $0.86 on 1,324,671 shares traded."
+    },
+    {
+      "rank": 4,
+      "ticker": "NCPL",
+      "name": "NCPL",
+      "change_pct": -40.36,
+      "price": 1.33,
+      "volume": 9130377,
+      "blurb": "Closed at $1.33, down $0.90 on 9,130,377 shares traded."
+    },
+    {
+      "rank": 5,
+      "ticker": "NANO",
+      "name": "NANO",
+      "change_pct": -39.31,
+      "price": 6.13,
+      "volume": 235775,
+      "blurb": "Closed at $6.13, down $3.97 on 235,775 shares traded."
+    },
+    {
+      "rank": 6,
+      "ticker": "MGNX",
+      "name": "MGNX",
+      "change_pct": -38.02,
+      "price": 2.25,
+      "volume": 3995747,
+      "blurb": "Closed at $2.25, down $1.38 on 3,995,747 shares traded."
+    },
+    {
+      "rank": 7,
+      "ticker": "FGL",
+      "name": "FGL",
+      "change_pct": -36.93,
+      "price": 1.81,
+      "volume": 8119394,
+      "blurb": "Closed at $1.81, down $1.06 on 8,119,394 shares traded."
+    },
+    {
+      "rank": 8,
+      "ticker": "NIPG",
+      "name": "NIPG",
+      "change_pct": -35.45,
+      "price": 4.06,
+      "volume": 7773,
+      "blurb": "Closed at $4.06, down $2.23 on 7,773 shares traded."
+    }
+  ]
+}

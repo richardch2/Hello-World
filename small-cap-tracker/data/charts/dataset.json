@@ -1,0 +1,28 @@
+{
+  "title": "Price charts",
+  "eyebrow": "Top 10 holdings",
+  "heading": "Price charts",
+  "lede": "Daily closing prices for the ten largest small-cap holdings in IWM. Pick a time range to compare how each stock has moved.",
+  "view": "price-chart",
+  "order": 4,
+  "options": {
+    "size": 10,
+    "keyField": "ticker",
+    "ranges": [
+      [
+        "1W",
+        5
+      ],
+      [
+        "1M",
+        21
+      ],
+      [
+        "3M",
+        65
+      ]
+    ],
+    "defaultRange": "1M",
+    "groupField": "sector"
+  }
+}

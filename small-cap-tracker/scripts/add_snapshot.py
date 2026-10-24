@@ -19,6 +19,7 @@ DATA_DIR = pathlib.Path(__file__).resolve().parent.parent / "data"
 # Fields each view needs on every item. Add an entry when you add a view.
 VIEW_FIELDS = {
     "ranked-list": ("rank", "name"),
+    "price-chart": ("rank", "name", "ticker", "closes"),
 }
 
 

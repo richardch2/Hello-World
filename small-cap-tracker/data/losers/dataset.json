@@ -1,0 +1,14 @@
+{
+  "title": "Top losers",
+  "eyebrow": "US stocks",
+  "heading": "Biggest losers of the day",
+  "lede": "The US-listed stocks that fell the most in one trading day, picked from the day's 20 biggest moves. Warrants, rights, units and stocks under $1 are left out, so some days list fewer than 10.",
+  "view": "ranked-list",
+  "order": 3,
+  "options": {
+    "valueField": "change_pct",
+    "valueFormat": "change",
+    "keyField": "ticker",
+    "trackMoves": false
+  }
+}

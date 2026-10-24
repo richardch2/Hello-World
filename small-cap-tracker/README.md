@@ -1,6 +1,10 @@
 # Small-Cap Tracker
 
-A tracker that keeps a daily history of small-cap data. Its first feature is the **Top 10 holdings** of the iShares Russell 2000 ETF (IWM).
+A tracker that keeps a daily history of small-cap data. Each feature is a tab:
+
+- **Top 10 holdings** of the iShares Russell 2000 ETF (IWM)
+- **Top gainers** and **Top losers**: the day's biggest moves among US stocks
+- **Price charts**: daily closes for the top 10 holdings over 1 week, 1 month or 3 months
 
 Double-click `index.html` to open it in your browser. It needs no server and no install, and it also works on GitHub Pages.
 
@@ -20,13 +24,14 @@ index.html            page shell: header, feature tabs, day picker
 app.js                tabs, day picker, history and links (#<dataset>/<date>)
 styles.css            shared colors and type, plus each view's styles
 icons/                app icon and manifest for "Add to Home screen"
-views/<view>.js       one file per kind of display, e.g. ranked-list.js
+views/<view>.js       one file per kind of display: ranked-list.js, price-chart.js
 data/<dataset>/
   dataset.json        title, wording, which view to use, view options
   YYYY-MM-DD.json     one saved day: {"date", "source", "items": [...]}
   index.json          generated list of days
 data/all.js           generated: every dataset in one file, which the page reads
 scripts/add_snapshot.py  adds a day, validates it, rebuilds the generated files
+scripts/import_alphavantage.py  turns Alpha Vantage downloads into days
 ```
 
 Git keeps every day's file, so the full history is always there.
@@ -38,6 +43,17 @@ python3 scripts/add_snapshot.py top10 path/to/2026-10-22.json
 ```
 
 To start a new day, copy the latest one and edit it. The script checks the new day against the dataset's rules, saves it and rebuilds `all.js`. Run the script with no arguments to just rebuild.
+
+## Updating from Alpha Vantage
+
+The gainers, losers and price charts come from Alpha Vantage:
+
+```
+python3 scripts/import_alphavantage.py movers movers.json   # a TOP_GAINERS_LOSERS response
+python3 scripts/import_alphavantage.py prices prices/       # one TIME_SERIES_DAILY CSV per ticker, e.g. prices/FROG.csv
+```
+
+The charts cover the stocks in the latest Top 10 day. Alpha Vantage writes Moog as `MOG-A`; save its file as `MOG.A.csv`.
 
 ## Adding a feature
 

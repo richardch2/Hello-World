@@ -7,6 +7,7 @@
 //   valueLabel  — label for the summed value in the summary line
 //   groupField  — item field used for filter chips (optional)
 //   keyField    — item field that identifies the same item across days (default "name")
+//   trackMoves  — false hides rank moves and drop-outs (for lists that reset daily)
 (function () {
   const filters = {};   // per dataset: chosen group
   const sorts = {};     // per dataset: "rank" or "name"
@@ -24,6 +25,7 @@
     render(root, ctx) {
       const { id, options: o, day, previous, format } = ctx;
       const key = o.keyField || "name";
+      const moves = o.trackMoves !== false ? previous : null;
       const items = day.items;
       const groups = o.groupField ? ["All", ...new Set(items.map(s => s[o.groupField]).filter(Boolean))] : [];
       let active = filters[id] || "All";
@@ -74,17 +76,19 @@
           b.appendChild(a);
         } else b.textContent = s.name;
         const meta = el("div", "meta");
-        if (s.ticker) meta.appendChild(el("span", "ticker", s.ticker));
+        if (s.ticker && s.ticker !== s.name) meta.appendChild(el("span", "ticker", s.ticker));
         if (o.groupField && s[o.groupField]) meta.appendChild(el("span", "group", s[o.groupField]));
-        if (previous) {
-          const before = previous.items.find(p => p[key] === s[key]);
+        if (moves) {
+          const before = moves.items.find(p => p[key] === s[key]);
           const d = before ? before.rank - s.rank : null;
           const mv = el("span", "move", !before ? "new" : d > 0 ? "▲" + d : d < 0 ? "▼" + -d : "–");
           if (!before || d > 0) mv.classList.add("up"); else if (d < 0) mv.classList.add("down");
           meta.appendChild(mv);
         }
         name.append(b, meta);
-        li.append(name, el("span", "value", format.value(s[o.valueField], o.valueFormat)));
+        const value = el("span", "value", format.value(s[o.valueField], o.valueFormat));
+        if (o.valueFormat === "change") value.classList.add(Number(s[o.valueField]) < 0 ? "down" : "up");
+        li.append(name, value);
         const bar = el("div", "bar"), fill = el("span");
         bar.setAttribute("aria-hidden", "true");
         fill.style.width = (maxV ? Math.abs(Number(s[o.valueField])) / maxV * 100 : 0).toFixed(1) + "%";
@@ -95,8 +99,8 @@
       });
 
       root.append(controls, summary, list);
-      const gone = previous ? previous.items.filter(p => !items.some(s => s[key] === p[key])) : [];
-      if (gone.length) root.appendChild(el("p", "dropped", "Dropped out since " + format.date(previous.date) + ": " + gone.map(p => p[key]).join(", ")));
+      const gone = moves ? moves.items.filter(p => !items.some(s => s[key] === p[key])) : [];
+      if (gone.length) root.appendChild(el("p", "dropped", "Dropped out since " + format.date(moves.date) + ": " + gone.map(p => p[key]).join(", ")));
     },
   });
 })();

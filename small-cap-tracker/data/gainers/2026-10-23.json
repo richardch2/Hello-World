@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-23",
+  "source": "Alpha Vantage top gainers and losers, 2026-10-23 16:15:58 US/Eastern",
+  "items": [
+    {
+      "rank": 1,
+      "ticker": "AIOK",
+      "name": "AIOK",
+      "change_pct": 182.82,
+      "price": 12.02,
+      "volume": 41223149,
+      "blurb": "Closed at $12.02, up $7.77 on 41,223,149 shares traded."
+    },
+    {
+      "rank": 2,
+      "ticker": "CLRO",
+      "name": "CLRO",
+      "change_pct": 69.27,
+      "price": 3.25,
+      "volume": 30678338,
+      "blurb": "Closed at $3.25, up $1.33 on 30,678,338 shares traded."
+    },
+    {
+      "rank": 3,
+      "ticker": "LYCA",
+      "name": "LYCA",
+      "change_pct": 66.67,
+      "price": 30.0,
+      "volume": 2274837,
+      "blurb": "Closed at $30.00, up $12.00 on 2,274,837 shares traded."
+    },
+    {
+      "rank": 4,
+      "ticker": "BOLT",
+      "name": "BOLT",
+      "change_pct": 53.68,
+      "price": 6.27,
+      "volume": 12708962,
+      "blurb": "Closed at $6.27, up $2.19 on 12,708,962 shares traded."
+    },
+    {
+      "rank": 5,
+      "ticker": "APXC",
+      "name": "APXC",
+      "change_pct": 41.94,
+      "price": 6.6,
+      "volume": 544097,
+      "blurb": "Closed at $6.60, up $1.95 on 544,097 shares traded."
+    }
+  ]
+}

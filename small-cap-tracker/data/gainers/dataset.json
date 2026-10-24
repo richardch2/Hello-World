@@ -1,0 +1,14 @@
+{
+  "title": "Top gainers",
+  "eyebrow": "US stocks",
+  "heading": "Biggest gainers of the day",
+  "lede": "The US-listed stocks that rose the most in one trading day, picked from the day's 20 biggest moves. Warrants, rights, units and stocks under $1 are left out, so some days list fewer than 10. Most of what's left is small caps, and moves this big often reverse quickly.",
+  "view": "ranked-list",
+  "order": 2,
+  "options": {
+    "valueField": "change_pct",
+    "valueFormat": "change",
+    "keyField": "ticker",
+    "trackMoves": false
+  }
+}
