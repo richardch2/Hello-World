@@ -1,0 +1,16 @@
+{
+  "title": "Top 10 holdings",
+  "eyebrow": "Russell 2000",
+  "heading": "Top 10 small-cap stocks",
+  "lede": "The ten largest holdings in the iShares Russell 2000 ETF (IWM), ranked by their weight in the fund. Every saved day is kept, so you can step back through earlier lists and see who moved up or down.",
+  "view": "ranked-list",
+  "order": 1,
+  "options": {
+    "size": 10,
+    "valueField": "weight",
+    "valueLabel": "Combined fund weight",
+    "valueFormat": "percent",
+    "groupField": "sector",
+    "keyField": "ticker"
+  }
+}

@@ -1,63 +1,94 @@
 #!/usr/bin/env python3
-"""Add or replace one day's top-10 snapshot and rebuild the date index.
+"""Add a day to a dataset and rebuild the generated data files.
 
 Usage:
-    python3 scripts/add_snapshot.py path/to/snapshot.json   # copy a new day in
-    python3 scripts/add_snapshot.py                          # just rebuild index.json
+    python3 scripts/add_snapshot.py top10 path/to/day.json   # add or replace one day
+    python3 scripts/add_snapshot.py                          # just rebuild
 
-A snapshot is a JSON object with "date" (YYYY-MM-DD), "fund", "source" and
-"stocks" (exactly 10 entries with rank, ticker, name, sector, weight).
+Each dataset is a folder under data/ with a dataset.json (title, view, options)
+and one YYYY-MM-DD.json per day. A day is {"date", "source", "items": [...]}.
+Rebuilding writes data/<dataset>/index.json and data/all.js, which the page reads.
 """
 import datetime
 import json
 import pathlib
 import sys
 
-DATA_DIR = pathlib.Path(__file__).resolve().parent.parent / "data" / "top10"
-REQUIRED = ("rank", "ticker", "name", "sector", "weight")
+DATA_DIR = pathlib.Path(__file__).resolve().parent.parent / "data"
+
+# Fields each view needs on every item. Add an entry when you add a view.
+VIEW_FIELDS = {
+    "ranked-list": ("rank", "name"),
+}
 
 
-def validate(snap, label):
+def fail(msg):
+    sys.exit(f"error: {msg}")
+
+
+def validate_day(day, meta, label):
     try:
-        datetime.date.fromisoformat(snap["date"])
+        datetime.date.fromisoformat(day["date"])
     except (KeyError, TypeError, ValueError):
-        sys.exit(f"{label}: 'date' must be YYYY-MM-DD")
-    stocks = snap.get("stocks")
-    if not isinstance(stocks, list) or len(stocks) != 10:
-        sys.exit(f"{label}: 'stocks' must list exactly 10 entries")
-    for s in stocks:
-        missing = [k for k in REQUIRED if k not in s]
+        fail(f"{label}: 'date' must be YYYY-MM-DD")
+    items = day.get("items")
+    if not isinstance(items, list) or not items:
+        fail(f"{label}: 'items' must be a non-empty list")
+    opts = meta.get("options", {})
+    size = opts.get("size")
+    if size and len(items) != size:
+        fail(f"{label}: expected {size} items, found {len(items)}")
+    needed = VIEW_FIELDS.get(meta["view"], ()) + tuple(
+        opts[k] for k in ("valueField", "keyField") if k in opts
+    )
+    for item in items:
+        missing = [k for k in needed if k not in item]
         if missing:
-            sys.exit(f"{label}: {s.get('ticker', '?')} is missing {', '.join(missing)}")
-    if sorted(s["rank"] for s in stocks) != list(range(1, 11)):
-        sys.exit(f"{label}: ranks must be 1 through 10")
+            fail(f"{label}: an item is missing {', '.join(missing)}")
 
 
-def rebuild_index():
-    snaps = {}
-    for path in sorted(DATA_DIR.glob("????-??-??.json")):
-        snap = json.loads(path.read_text())
-        validate(snap, path.name)
-        if path.stem != snap["date"]:
-            sys.exit(f"{path.name}: file name does not match date {snap['date']}")
-        snaps[snap["date"]] = snap
-    index = {"dates": sorted(snaps, reverse=True)}
-    (DATA_DIR / "index.json").write_text(json.dumps(index, indent=2) + "\n")
-    # The same data as a script, so index.html also works opened straight from disk.
-    bundle = json.dumps({"dates": index["dates"], "days": snaps}, ensure_ascii=False)
-    (DATA_DIR / "all.js").write_text(f"window.TOP10 = {bundle};\n")
-    return index
+def load_meta(folder):
+    meta_path = folder / "dataset.json"
+    if not meta_path.exists():
+        fail(f"{folder.name}: no dataset.json")
+    meta = json.loads(meta_path.read_text())
+    if meta.get("view") not in VIEW_FIELDS:
+        fail(f"{folder.name}: unknown view {meta.get('view')!r}; known: {', '.join(VIEW_FIELDS)}")
+    return meta
+
+
+def rebuild():
+    bundle = {}
+    for folder in sorted(p for p in DATA_DIR.iterdir() if p.is_dir()):
+        meta = load_meta(folder)
+        days = {}
+        for path in sorted(folder.glob("????-??-??.json")):
+            day = json.loads(path.read_text())
+            validate_day(day, meta, f"{folder.name}/{path.name}")
+            if path.stem != day["date"]:
+                fail(f"{folder.name}/{path.name}: file name does not match date {day['date']}")
+            days[day["date"]] = day
+        dates = sorted(days, reverse=True)
+        (folder / "index.json").write_text(json.dumps({"dates": dates}, indent=2) + "\n")
+        bundle[folder.name] = {"meta": meta, "dates": dates, "days": days}
+        print(f"{folder.name}: {len(dates)} day(s), latest {dates[0] if dates else 'none'}")
+    # A script rather than JSON so index.html also works opened straight from disk.
+    text = json.dumps({"datasets": bundle}, ensure_ascii=False)
+    (DATA_DIR / "all.js").write_text(f"window.TRACKER_DATA = {text};\n")
 
 
 def main():
-    if len(sys.argv) > 1:
-        snap = json.loads(pathlib.Path(sys.argv[1]).read_text())
-        validate(snap, sys.argv[1])
-        out = DATA_DIR / f"{snap['date']}.json"
-        out.write_text(json.dumps(snap, indent=2, ensure_ascii=False) + "\n")
-        print(f"wrote {out.relative_to(DATA_DIR.parent.parent)}")
-    index = rebuild_index()
-    print(f"index has {len(index['dates'])} day(s), latest {index['dates'][0] if index['dates'] else 'none'}")
+    if len(sys.argv) == 3:
+        folder = DATA_DIR / sys.argv[1]
+        meta = load_meta(folder)
+        day = json.loads(pathlib.Path(sys.argv[2]).read_text())
+        validate_day(day, meta, sys.argv[2])
+        out = folder / f"{day['date']}.json"
+        out.write_text(json.dumps(day, indent=2, ensure_ascii=False) + "\n")
+        print(f"wrote data/{folder.name}/{out.name}")
+    elif len(sys.argv) != 1:
+        fail("usage: add_snapshot.py [<dataset> <day.json>]")
+    rebuild()
 
 
 if __name__ == "__main__":
