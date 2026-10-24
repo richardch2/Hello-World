@@ -4,12 +4,23 @@ A tracker that keeps a daily history of small-cap data. Its first feature is the
 
 Double-click `index.html` to open it in your browser. It needs no server and no install, and it also works on GitHub Pages.
 
+## Phone home-screen icon
+
+The app has its own icon in `icons/`. To put it on an Android home screen:
+
+1. Serve the folder, e.g. in Termux: `cd small-cap-tracker && python -m http.server 8080`.
+2. Open `http://localhost:8080` in Chrome.
+3. Tap ⋮ → **Add to Home screen** (or **Install app**).
+
+The icon then opens the tracker full screen, like an app. Opened as a plain file (`file://`), Chrome ignores the icon, so serve it first.
+
 ## Layout
 
 ```
 index.html            page shell: header, feature tabs, day picker
 app.js                tabs, day picker, history and links (#<dataset>/<date>)
 styles.css            shared colors and type, plus each view's styles
+icons/                app icon and manifest for "Add to Home screen"
 views/<view>.js       one file per kind of display, e.g. ranked-list.js
 data/<dataset>/
   dataset.json        title, wording, which view to use, view options
